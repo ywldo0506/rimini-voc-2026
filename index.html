@@ -206,13 +206,11 @@ function render(){
       const d=+(sw.p-sp.p).toFixed(1);
       dc=d>0?`<span class="dcu">▲${Math.abs(d)}%p</span>`:d<0?`<span class="dcd">▼${Math.abs(d)}%p</span>`:`<span class="dce">-</span>`;
     }
-    const rvCnt=(cfg.reviews[store]||{})[wk]?.length||0;
     rows+=`<tr onclick="openDrawer('${store.replace(/'/g,"\\'")}','${wk}')">
       <td class="snm">${store}</td>
       <td><span class="ln">${sw.l}건</span><span class="tn"> / ${sw.t}건</span></td>
       <td><div class="bw"><div class="bb" style="width:${bw}px"></div><span class="pn ${pc(sw.p)}">${sw.p}%</span>${dc}</div></td>
       <td><span class="${ac(sw.a)}">${sw.a}</span></td>
-      <td>${rvCnt>0?`<button class="rvb">📋 ${rvCnt}건</button>`:'—'}</td>
     </tr>`;
   });
 
@@ -238,7 +236,7 @@ function render(){
         <span style="margin-left:auto;font-size:12px;font-weight:400">${cell} 저평점 ${cur.pct}% ${dH}</span>
       </div>
       <table>
-        <thead><tr><th>매장명</th><th>저평점</th><th>저평점 비율${prev?' (▲▼ 전주)':''}</th><th>평균 평점</th><th>리뷰</th></tr></thead>
+        <thead><tr><th>매장명</th><th>저평점</th><th>저평점 비율${prev?' (▲▼ 전주)':''}</th><th>평균 평점</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`;
