@@ -491,6 +491,74 @@ MONTH_CONFIG.m8 = {"label": "8월", "weeks": ["w1", "cum"], "weekLabels": ["1주
   m.badge = { avg: avg.toFixed(2)+'점', pct: `1-2점 ${low}건 · ${pct}%` };
 })();
 
+(function(){
+  const m = MONTH_CONFIG.m8;
+  const extraStore = {"리미니 NC 불광점": {"t": 1, "l": 0, "s": 5}, "리미니 강남본점": {"t": 5, "l": 0, "s": 24}, "리미니 뉴코아 부천점": {"t": 5, "l": 0, "s": 22}, "리미니 뉴코아 일산점": {"t": 3, "l": 0, "s": 15}, "리미니 롯데몰 은평점": {"t": 2, "l": 0, "s": 10}, "리미니 홈플러스 월드컵점": {"t": 0, "l": 0, "s": 0}, "리미니 NC 강서점": {"t": 4, "l": 0, "s": 19}, "리미니 NC 대전유성점": {"t": 0, "l": 0, "s": 0}, "리미니 NC 수원터미널점": {"t": 2, "l": 0, "s": 10}, "리미니 NC 청주점": {"t": 0, "l": 0, "s": 0}, "리미니 뉴코아 인천점": {"t": 0, "l": 0, "s": 0}, "리미니 뉴코아 평택점": {"t": 0, "l": 0, "s": 0}, "리미니 연수 스퀘어원점": {"t": 2, "l": 0, "s": 9}, "리미니 이마트 광주점": {"t": 5, "l": 0, "s": 24}, "리미니 2001 분당점": {"t": 0, "l": 0, "s": 0}, "리미니 뉴코아 평촌점": {"t": 1, "l": 0, "s": 5}, "리미니 대구 이월드점": {"t": 0, "l": 0, "s": 0}, "리미니 동아쇼핑 대구점": {"t": 0, "l": 0, "s": 0}, "리미니 롯데 산본점": {"t": 3, "l": 0, "s": 15}, "리미니 롯데몰 수지점": {"t": 5, "l": 0, "s": 25}, "리미니 이마트 월배점": {"t": 1, "l": 0, "s": 5}, "리미니 NC 송파점 7층": {"t": 3, "l": 0, "s": 15}, "리미니 NC 신구로점": {"t": 7, "l": 0, "s": 33}, "리미니 NC 야탑점": {"t": 1, "l": 0, "s": 5}, "리미니 NC 해운대점": {"t": 0, "l": 0, "s": 0}, "리미니 김해 신세계점": {"t": 0, "l": 0, "s": 0}, "리미니 뉴코아 창원점": {"t": 1, "l": 0, "s": 5}, "리미니 롯데아울렛 동부산점": {"t": 0, "l": 0, "s": 0}, "리미니 스타필드 위례점": {"t": 1, "l": 0, "s": 5}};
+  const extraRev = {"리미니 NC 불광점": [], "리미니 강남본점": [], "리미니 뉴코아 부천점": [], "리미니 뉴코아 일산점": [], "리미니 롯데몰 은평점": [], "리미니 홈플러스 월드컵점": [], "리미니 NC 강서점": [], "리미니 NC 대전유성점": [], "리미니 NC 수원터미널점": [], "리미니 NC 청주점": [], "리미니 뉴코아 인천점": [], "리미니 뉴코아 평택점": [], "리미니 연수 스퀘어원점": [], "리미니 이마트 광주점": [], "리미니 2001 분당점": [], "리미니 뉴코아 평촌점": [], "리미니 대구 이월드점": [], "리미니 동아쇼핑 대구점": [], "리미니 롯데 산본점": [], "리미니 롯데몰 수지점": [], "리미니 이마트 월배점": [], "리미니 NC 송파점 7층": [], "리미니 NC 신구로점": [], "리미니 NC 야탑점": [], "리미니 NC 해운대점": [], "리미니 김해 신세계점": [], "리미니 뉴코아 창원점": [], "리미니 롯데아울렛 동부산점": [], "리미니 스타필드 위례점": []};
+
+  m.weekDates.w4 = '8/24~8/31';
+  m.weekDates.cum = '8/1~8/31';
+
+  for(const store of Object.keys(m.storeWeek)){
+    const ex = extraStore[store] || {t:0,l:0,s:0};
+    const cur = m.storeWeek[store].w4;
+    const curSum = Math.round(cur.a * cur.t);
+    const newT = cur.t + ex.t;
+    const newL = cur.l + ex.l;
+    const newSum = curSum + ex.s;
+    m.storeWeek[store].w4 = {
+      t: newT, l: newL,
+      p: newT>0 ? Math.round((newL/newT*100)*10)/10 : 0.0,
+      a: newT>0 ? Math.round((newSum/newT)*100)/100 : 0.0
+    };
+    const exRev = extraRev[store] || [];
+    m.reviews[store].w4 = [...(m.reviews[store].w4||[]), ...exRev];
+    const w1s=m.storeWeek[store].w1, w2s=m.storeWeek[store].w2, w3s=m.storeWeek[store].w3;
+    const t = w1s.t+w2s.t+w3s.t;
+    const l = w1s.l+w2s.l+w3s.l;
+    m.storeWeek[store].cum = {
+      t, l,
+      p: t>0 ? Math.round((l/t*100)*10)/10 : 0.0,
+      a: t>0 ? Math.round(((w1s.t*w1s.a+w2s.t*w2s.a+w3s.t*w3s.a)/t)*100)/100 : 0.0
+    };
+    m.reviews[store].cum = [...(m.reviews[store].w1||[]), ...(m.reviews[store].w2||[]), ...(m.reviews[store].w3||[]), ...(m.reviews[store].w4||[])];
+  }
+
+  for(const c of Object.keys(m.cellWeek)){
+    const stores = CELL_STORES[c].map(s => s === '리미니 뉴코아 강남점' ? '리미니 강남본점' : s);
+    let t=0, l=0, s=0;
+    for(const store of stores){
+      const sw = m.storeWeek[store].w4;
+      t += sw.t; l += sw.l; s += sw.t*sw.a;
+    }
+    m.cellWeek[c].w4 = {
+      total: t, low: l,
+      pct: t>0 ? Math.round((l/t*100)*10)/10 : 0.0,
+      avg: t>0 ? Math.round((s/t)*100)/100 : 0.0
+    };
+    const w1=m.cellWeek[c].w1, w2=m.cellWeek[c].w2, w3=m.cellWeek[c].w3;
+    const total = w1.total+w2.total+w3.total + m.cellWeek[c].w4.total;
+    const low = w1.low+w2.low+w3.low + m.cellWeek[c].w4.low;
+    const wsum = (w1.total*w1.avg+w2.total*w2.avg+w3.total*w3.avg) + (m.cellWeek[c].w4.total*m.cellWeek[c].w4.avg);
+    m.cellWeek[c].cum = {
+      total, low,
+      pct: total>0 ? Math.round((low/total*100)*10)/10 : 0.0,
+      avg: total>0 ? Math.round((wsum/total)*100)/100 : 0.0
+    };
+  }
+
+  let totalCount=0, low=0, wsum=0;
+  for(const c of Object.keys(m.cellWeek)){
+    totalCount += m.cellWeek[c].cum.total;
+    low += m.cellWeek[c].cum.low;
+    wsum += m.cellWeek[c].cum.total*m.cellWeek[c].cum.avg;
+  }
+  const avg = totalCount>0 ? Math.round((wsum/totalCount)*100)/100 : 0.0;
+  const pct = totalCount>0 ? Math.round((low/totalCount*100)*10)/10 : 0.0;
+  m.totalCount = totalCount;
+  m.badge = { avg: avg.toFixed(2)+'점', pct: `1-2점 ${low}건 · ${pct}%` };
+})();
+
 MONTH_CONFIG.h1 = {"label":"상반기 누적","badge":{"avg":"4.53점","pct":"1-2점 399건 · 4.2%"}};
 const QUARTER_OF = {m1:'h1',m2:'h1',m3:'h1',m4:'h1',m5:'h1',m6:'h1',m7:'m7',m8:'m8'};
 const CELL_KEYS = Object.keys(CELL_STORES).sort((a,b)=>parseInt(a)-parseInt(b));
